@@ -1,24 +1,26 @@
 package com.full.shopping.controller;
 
 import static java.lang.System.out;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
-
 import com.full.shopping.view.Choices;
 
 public class ShoppingCart {
 	static int remain;
-	static String customerName, item;
-	static int cartId, availability;
-	static int customerChoice;
+	static String customerCartId, customerName, item, option;
+	static int availability;
+	static String customerChoice;
 	static Integer itemQuantity;
-	static Map<String, Integer> customerItems = new LinkedHashMap<String, Integer>();
+	static Map<String, Integer> customerItems;
+	static Map<String, String> customer = new LinkedHashMap<String, String>();
 	static Map<String, Integer> storeProducts = new LinkedHashMap<String, Integer>();
 	static Map<String, Map<String, Integer>> customerDetails = new LinkedHashMap<String, Map<String, Integer>>();
 	static Scanner customerInput = new Scanner(System.in);
 
 	public static void main(String[] args) throws Exception {
+
 		storeProducts.put("milk", 13);
 		storeProducts.put("bread", 13);
 		storeProducts.put("sugar", 13);
@@ -31,34 +33,32 @@ public class ShoppingCart {
 		do {
 			choice.options();
 			customerChoice = choice.getChoice();
-
 			switch (customerChoice) {
-			case 1:
-				do {
-					customerItems.clear();
-					out.println(storeProducts);
-					userItems();
-					out.println("Enter your Name:");
-					customerName = customerInput.next();
-					// cartId=customerInput.nextInt();
-					out.println("Customer :" + customerName + " \npurchased items");
-					out.println(customerItems);
-					customerDetails.put(customerName, customerItems);
-					out.println("any other customer(yes/anything)");
-				} while (customerInput.next().equalsIgnoreCase("yes"));
-				out.println("display menu(yes/anything)");
+			case "1":
+				out.println(storeProducts);
+				out.println("display menu(yes/no)");
 				break;
-			case 2:
+			case "2":
+				customerItems = new LinkedHashMap<String, Integer>();
+				userItems();
+				out.println("Enter your name :");
+				customerName = customerInput.next();
+				out.println("Customer :" + customerName + " \npurchased items");
+				out.println(customerItems);
+				customerDetails.put(customerCartId, customerItems);
+				out.println("display menu(yes/no)");
+				break;
+			case "3":
 				out.println(customerDetails);
-				out.println("display menu(yes/anything)");
+				out.println("display menu(yes/)");
 				break;
-			case 3:
+			case "4":
 				out.println("Thank You....Visit Again");
 				System.exit(0);
 				break;
 			default:
 				out.println("enter valid input");
-				out.println("display menu(yes/anything)");
+				out.println("display menu(yes/no)");
 				break;
 			}
 		} while (customerInput.next().equalsIgnoreCase("yes"));
@@ -66,7 +66,7 @@ public class ShoppingCart {
 	}
 
 	public static void userItems() throws ProductNotFoundException {
-		out.println("\ndo you want to purchase any item(yes/anything)");
+		out.println("\ndo you want to purchase any item(yes/no)");
 		while (customerInput.next().equalsIgnoreCase("yes")) {
 
 			out.println("enter the items and quantity");
@@ -75,28 +75,8 @@ public class ShoppingCart {
 				if (storeProducts.containsKey(item)) {
 					itemQuantity = customerInput.nextInt();
 					availability = storeProducts.get(item);
-					remain=availability;
-					/*try {
-						if (availability >= itemQuantity) {
-							availability = availability - itemQuantity;
-							customerItems.put(item, itemQuantity);
-							storeProducts.put(item, availability);
-						}
-						else {
-							throw new Exception();
-						}
-					}
+					remain = availability;
 
-					catch (Exception e) {
-						out.println(
-								"we have only " + availability + " packets ..Please order within the availability..");
-						out.println("want to order(1/any other digit)");
-						if (customerInput.nextInt() == 1) {
-							itemQuantity = customerInput.nextInt();
-							storeProducts.put(item, availability);
-						}
-					}
-*/
 					itemQuantityCheck(availability, itemQuantity);
 				} else {
 					throw new ProductNotFoundException();
@@ -104,43 +84,43 @@ public class ShoppingCart {
 			} else {
 				itemQuantity = customerInput.nextInt();
 				itemQuantity = itemQuantity + customerItems.get(item);
-				itemQuantityCheck(availability,itemQuantity);
+				itemQuantityCheck(availability, itemQuantity);
 				customerItems.put(item, itemQuantity);
 			}
 
-			out.println("do you want to purchase any other item(yes/anything)");
+			out.println("do you want to purchase any other item(yes/no)");
 		}
 
 	}
-       public static void itemQuantityCheck(int availability,int itemQuantity)
-       {
-    	   
-    	   try {
-				if (availability >= itemQuantity) {
-					availability = availability - itemQuantity;
-					remain=availability;
-					customerItems.put(item, itemQuantity);
-					storeProducts.put(item, availability);
-				}
-				else {
-					throw new Exception();
-				}
+
+	public static void itemQuantityCheck(int availability, int itemQuantity) {
+
+		try {
+			if (availability >= itemQuantity) {
+				availability = availability - itemQuantity;
+				remain = availability;
+				customerItems.put(item, itemQuantity);
+				storeProducts.put(item, availability);
+			} else {
+				throw new Exception();
 			}
+		}
 
-			catch (Exception e) {
+		catch (Exception e) {
 
-				out.println(
-						"we have only " + remain + " packets ..Please order within the availability..");
-				out.println("want to order(1/any other digit)");
-				if (customerInput.nextInt() == 1) {
-					out.println("enter Quantity");
-					itemQuantity = customerInput.nextInt();
-					
-					itemQuantityCheck(availability,itemQuantity);
-					customerItems.put(item,itemQuantity);
-					storeProducts.put(item, availability);
-				}
+			out.println("we have only " + remain + " packets ..Please order within the availability..");
+			out.println("want to order(1/any other digit)");
+			if (customerInput.nextInt() == 1) {
+				out.println("enter Quantity");
+				itemQuantity = customerInput.nextInt();
+
+				itemQuantityCheck(availability, itemQuantity);
+				customerItems.put(item, itemQuantity);
+				// storeProducts.put(item, availability);
 			}
+		}
 
-       }
+	}
+	
 }
+

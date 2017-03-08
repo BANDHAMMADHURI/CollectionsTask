@@ -10,15 +10,15 @@ import java.util.TreeMap;
 
 public class ShoppingCart {
 	static int remain;
-	static String customerName, item;
+	static String customerCartId, customerName, item, option;
 	static int availability;
-	static String customerChoice,userItems;
-	static Integer itemQuantity;
+	static String customerChoice,input,userItems;
+	static Integer itemQuantity/*,itemQuantity1*/;
 	static Map<String, Integer> customerItems;
 	static List<String> customersList=new LinkedList<String>();
- 	
+ 	//static Map<String, String> customer = new LinkedHashMap<String, String>();
 	static Map<String, Integer> storeProducts = new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER);
-	
+	//static Map<String, Map<String, Integer>> customerDetails = new LinkedHashMap<String, Map<String, Integer>>();
 	static Scanner customerInput = new Scanner(System.in);
 	static Choices choice = new Choices();
 
@@ -32,7 +32,7 @@ public class ShoppingCart {
 		storeProducts.put("toothBrush", 13);
 
 		out.println("\t====Welcome to ShoppingCart====\n");
-		
+		//out.println("\t\tChoose your option\n");
 		do {
 			choice.options();
 			customerChoice = choice.getChoice();
@@ -40,7 +40,7 @@ public class ShoppingCart {
 			case "1":
 				out.println(storeProducts);
 				out.println("display menu(yes/no)");
-				customerChoice=choice.inputCheck();
+				input=choice.inputCheck();
 				break;
 			case "2":
 				customerItems = new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER);
@@ -50,17 +50,17 @@ public class ShoppingCart {
 
 				out.println("Customer :" + customerName + " \npurchased items");
 				out.println(customerItems);
-				
+				//customerDetails.put(customerName, customerItems);
 				userItems=customerName.concat((customerItems).toString());
 				customersList.add(userItems);
 				out.println("display menu(yes/no)");
-				customerChoice=choice.inputCheck();
+				input=choice.inputCheck();
 				break;
 			case "3":
-				
+				//out.println(customerDetails);
 				out.println(customersList);
 				out.println("display menu(yes/no)");
-				customerChoice=choice.inputCheck();
+				input=choice.inputCheck();
 				break;
 			case "4":
 				out.println("Thank You for Choosing Us....Visit Again");
@@ -69,28 +69,29 @@ public class ShoppingCart {
 			default:
 				out.println("enter valid input");
 				out.println("display menu(yes/no)");
-				customerChoice=choice.inputCheck();
+				input=choice.inputCheck();
 				break;
 			}
-		} while (customerChoice.equalsIgnoreCase("yes"));
+		} while (input.equalsIgnoreCase("yes"));
 		customerInput.close();
 	}
 
 	public static void userItems() throws Exception {
 		out.println("\ndo you want to purchase any item(yes/no)..The value is 'Case Sensitive'");
-		String customerChoice = choice.inputCheck();
-		
+		String input = choice.inputCheck();
+		// while (input.equalsIgnoreCase("yes")) {
 		do{
-		switch (customerChoice.toLowerCase()) {
+		switch (input.toLowerCase()) {
 		case "yes":
-			
+			/*do
+			{*/
 			out.println("enter the item and quantity");
 			item = customerInput.next();
 			try {
 				if (!customerItems.containsKey(item)) {
 					if (storeProducts.containsKey(item)) {
 						itemQuantity = customerInput.nextInt();
-						 itemQuantity1=itemQuantity;
+						 //itemQuantity1=itemQuantity;
 						availability = storeProducts.get(item);
 						remain = availability;
 
@@ -102,12 +103,12 @@ public class ShoppingCart {
 				else {
 					itemQuantity = customerInput.nextInt();
 					availability = storeProducts.get(item);
-					
+					//itemQuantityCheck(availability, itemQuantity);
 					if(itemQuantity>availability)
 						itemQuantity=0;
 					itemQuantity = itemQuantity + customerItems.get(item);
 					itemQuantityCheck(availability, itemQuantity);
-					
+					//itemQuantity = itemQuantity + customerItems.get(item);
 					customerItems.put(item, itemQuantity);
 					storeProducts.put(item, availability);
 				}
@@ -115,18 +116,18 @@ public class ShoppingCart {
 				
 				System.out.println("Enter Valid Input(yes/no)");
 				
-				customerChoice=choice.inputCheck();
+				input=choice.inputCheck();
 			}
 
 			out.println("do you want to purchase any other item(yes/no)...The value is 'Case Sensitive'");
-			
-			customerChoice = customerInput.next();
+			//input = choice.inputCheck();
+			input = customerInput.next();
 			break;
 		case "no": break;
 		default:System.out.println("Enter Valid Input(yes/no)");
-		        customerChoice = customerInput.next(); 
+		        input = customerInput.next(); 
 		        break;
-		}}while(customerChoice.equalsIgnoreCase("yes"));
+		}}while(input.equalsIgnoreCase("yes"));
 
 	}
 
@@ -140,7 +141,8 @@ public class ShoppingCart {
 				customerItems.put(item, itemQuantity);
 				storeProducts.put(item, availability);
 			} else {
-				
+				//itemQuantity=itemQuantity - /*itemQuantity1*/;
+				//customerItems.put(item, itemQuantity);
 				storeProducts.put(item, availability);
 				throw new Exception();
 			}
@@ -149,15 +151,17 @@ public class ShoppingCart {
 		catch (Exception e) {
 
 			out.println("we have only " + remain + " packets ..Please order within the availability..");
-			
+			//itemQuantity = itemQuantity - customerItems.get(item);
 			out.println("want to order again (yes/no)");
-			customerChoice=choice.inputCheck();
-			if (customerChoice.equals("yes")) {
+			input=choice.inputCheck();
+			if (input.equals("yes")) {
 				out.println("enter Quantity");
 				 itemQuantity = customerInput.nextInt();
 				 
 				itemQuantityCheck(availability, itemQuantity);
-				
+				//itemQuantity = itemQuantity + customerItems.get(item);
+				if(availability<itemQuantity)
+					itemQuantity=0;
 				availability=availability-itemQuantity;
 				customerItems.put(item, itemQuantity);
 			    storeProducts.put(item, availability);

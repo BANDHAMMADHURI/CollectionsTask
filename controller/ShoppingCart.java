@@ -5,6 +5,7 @@ import static java.lang.System.out;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.InputMismatchException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +16,15 @@ public class ShoppingCart {
 	static String customerName, item;
 	static int availability;
 	static String customerInput, userTotalItems;
-	static Integer itemQuantity;
+	static Integer itemQuantity, quantity;
 	static Map<String, Integer> customerItems;
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static List<String> customersList = new LinkedList<String>();
-	static Map<String, Integer> storeProducts = new TreeMap<String, Integer>(/*String.CASE_INSENSITIVE_ORDER*/);
+	static Map<String, Integer> storeProducts = new TreeMap<String, Integer>(/*
+																				 * String
+																				 * .
+																				 * CASE_INSENSITIVE_ORDER
+																				 */);
 	static Choices choice = new Choices();
 
 	public static void main(String[] args) throws Exception {
@@ -29,7 +34,6 @@ public class ShoppingCart {
 		storeProducts.put("sugar", 13);
 		storeProducts.put("coffee", 13);
 		storeProducts.put("lays", 13);
-		
 
 		out.println("\t====Welcome to ShoppingCart====\n");
 		do {
@@ -42,7 +46,10 @@ public class ShoppingCart {
 				customerInput = choice.inputCheck();
 				break;
 			case "2":
-				customerItems = new TreeMap<String, Integer>(/*String.CASE_INSENSITIVE_ORDER*/);
+				customerItems = new TreeMap<String, Integer>(/*
+																 * String.
+																 * CASE_INSENSITIVE_ORDER
+																 */);
 
 				nameCheck();
 				userItems();
@@ -86,22 +93,20 @@ public class ShoppingCart {
 					if (!customerItems.containsKey(item)) {
 						if (storeProducts.containsKey(item)) {
 							quantityMatchCheck();
+							
 							availability = storeProducts.get(item);
 							itemQuantityCheck(availability, itemQuantity);
 						} else {
 							throw new ProductNotFoundException();
 						}
 					} else {
-
+						quantity = customerItems.get(item);
 						availability = storeProducts.get(item);
-
+						System.out.println("pre" + customerItems.get(item));
 						quantityMatchCheck();
 						itemQuantityCheck(availability, itemQuantity);
-						if (itemQuantity > availability)
-							itemQuantity = 0;
 						availability = availability - itemQuantity;
-						itemQuantity = itemQuantity + customerItems.get(item)+1;
-						System.out.println(itemQuantity);
+						itemQuantity = itemQuantity + quantity;
 						customerItems.put(item, itemQuantity);
 						storeProducts.put(item, availability);
 
@@ -136,8 +141,8 @@ public class ShoppingCart {
 
 				availability = availability - itemQuantity;
 
-				customerItems.put(item, itemQuantity);
 				storeProducts.put(item, availability);
+				customerItems.put(item, itemQuantity);
 			} else {
 
 				storeProducts.put(item, availability);
@@ -147,7 +152,7 @@ public class ShoppingCart {
 
 		catch (Exception e) {
 			out.println("out of stock\n");
-			
+
 			userItems();
 
 		}
@@ -161,7 +166,7 @@ public class ShoppingCart {
 			for (int i = 0; i < customerName.length(); i++) {
 				b = Character.isLetter(customerName.charAt(i));
 				if (b)
-					continue; 
+					continue;
 				else {
 					out.println("enter in string format only");
 					break;
@@ -175,16 +180,25 @@ public class ShoppingCart {
 			customerInput = "no";
 			try {
 				out.println("enter quantity");
-
-				itemQuantity = Integer.parseInt(br.readLine());
+				checkInteger(itemQuantity);
 
 			} catch (Exception e) {
-				out.println("enter digits only");
-				out.println("do you want to again...(yes/no)");
+				out.println("enter positive digits only");
+				out.println("do you want to enter again...(yes/no)");
 				customerInput = choice.inputCheck();
 
 			}
+
 		} while (customerInput.equals("yes"));
+	}
+
+	public static void checkInteger(Integer quantity) throws Exception {
+		itemQuantity = Integer.parseInt(br.readLine());
+		if (itemQuantity < 0) {
+
+			throw new Exception();
+		}
+
 	}
 
 }
